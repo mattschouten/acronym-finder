@@ -81,8 +81,7 @@ class AcronymUi(tk.Frame):
         acronyms = acronym_finding.find_all_acronyms(text)
 
         self.working_acronyms = acronym_finding.combine_acronyms(self.working_acronyms, acronyms)
-        self.acronyms_found_label.delete(0, tk.END)
-        self.acronyms_found_label.insert(0, len(self.working_acronyms))
+        self.update_acronym_count()
     
     def scan_whole_document(self):
         if word is None:
@@ -92,14 +91,19 @@ class AcronymUi(tk.Frame):
         acronyms = acronym_finding.find_all_acronyms(text)
 
         self.working_acronyms = acronym_finding.combine_acronyms(self.working_acronyms, acronyms)
-        self.acronyms_found_label.delete(0, tk.END)
-        self.acronyms_found_label.insert(0, len(self.working_acronyms))
+        self.update_acronym_count()
 
     def clear_acronyms(self):
         self.working_acronyms = {}
+        self.update_acronym_count()
     
     def generate_acronym_table(self):
         word.create_acronym_document(self.working_acronyms)
+
+    def update_acronym_count(self):
+        self.acronyms_found_label.delete(0, tk.END)
+        self.acronyms_found_label.insert(0, len(self.working_acronyms))
+
 
 if __name__ == '__main__':
     root = tk.Tk()

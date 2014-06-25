@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from acronym_finding import find_acronyms, find_expanded_acronyms, strip_extraneous_words, fix_divided_expansion, expanded_regex, find_all_acronyms, combine_acronyms, expand_parenthesized_acronyms, add_expansion
+from acronym_finding import find_acronyms, find_expanded_acronyms, strip_extraneous_words, fix_divided_expansion, expanded_regex, find_all_acronyms, combine_acronyms, add_expansion
 
 
 class TestAcronymFinding(unittest.TestCase):
@@ -207,10 +207,6 @@ class TestAcronymFinding(unittest.TestCase):
 
 	def test_request_for_comment(self):
 			text = 'Someone published a new Request for Comment (RFC) today.'
-			acronyms = expand_parenthesized_acronyms(text)
-			self.assertEqual(len(acronyms), 1)
-			self.assertTrue('RFC' in acronyms)
-			self.assertEqual(acronyms['RFC'], ['Request for Comment'])
 
 			acronyms = find_all_acronyms(text)
 			self.assertEqual(len(acronyms), 1)

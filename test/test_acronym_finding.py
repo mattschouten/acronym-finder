@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from acronym_finding import find_acronyms, find_expanded_acronyms, strip_extraneous_words, fix_divided_expansion, expanded_regex, find_all_acronyms, combine_acronyms
+from acronym_finding import find_acronyms, find_expanded_acronyms, strip_extraneous_words, fix_divided_expansion, expanded_regex, find_all_acronyms, combine_acronyms, expand_parenthesized_acronyms, add_expansion
 
 
 class TestAcronymFinding(unittest.TestCase):
@@ -204,5 +204,38 @@ class TestAcronymFinding(unittest.TestCase):
 
 			test_combined = combine_acronyms(first_acronyms, second_acronyms)
 			self.assertDictEqual(correct_combined, test_combined)
+
+	def test_request_for_comment(self):
+			text = 'Someone published a new Request for Comment (RFC) today.'
+			acronyms = expand_parenthesized_acronyms(text)
+			self.assertEqual(len(acronyms), 1)
+			self.assertTrue('RFC' in acronyms)
+			self.assertEqual(acronyms['RFC'], ['Request for Comment'])
+
+			acronyms = find_all_acronyms(text)
+			self.assertEqual(len(acronyms), 1)
+			self.assertTrue('RFC' in acronyms)
+			self.assertEqual(acronyms['RFC'], ['Request for Comment'])
+
+	def test_add_expansion(self):
+			acronyms = {}
+			add_expansion(acronyms, 'MFE', 'My Fake Expansion')
+
+			self.assertEqual(len(acronyms), 1)
+			self.assertEqual(acronyms['MFE'], ['My Fake Expansion'])
+
+			# Adding the same expansion should not change the expansion list
+			add_expansion(acronyms, 'MFE', 'My Fake Expansion')
+			self.assertEqual(len(acronyms), 1)
+			self.assertEqual(acronyms['MFE'], ['My Fake Expansion'])
+
+			add_expansion(acronyms, 'MFE', 'Mother Failed English')
+			self.assertEqual(len(acronyms), 1)
+			self.assertListEqual(acronyms['MFE'], ['My Fake Expansion', 'Mother Failed English'])
+
+			add_expansion(acronyms, 'ABC', 'A B C')
+			self.assertEqual(len(acronyms), 2)
+			self.assertListEqual(acronyms['ABC'], ['A B C'])
+			self.assertListEqual(acronyms['MFE'], ['My Fake Expansion', 'Mother Failed English'])
 
 # TODO:  Consider adding support for acronym-expansion, e.g. "ABC (Alpha Beta Corporation)"

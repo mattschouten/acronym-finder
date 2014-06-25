@@ -1,15 +1,19 @@
 import re
 
 basic_regex = r'\b([A-Z]{2,})\b'
+parenthesized_regex = r'\(([A-Z]{2,})\)'
 #expanded_regex = r'([A-Z]\w+(?: [A-Z]\w+)+)' + ' \(' + basic_regex + '\)'
 expanded_regex = r'([A-Z][\w\-]+(?:[, ]{1,2}[A-Z][\w\-]+)+)[ .,]{0,2}' + ' \(' + basic_regex + '\)'
+expanded_tolerant_regex = r'([A-Z][\w\-]+(?:[ ][\w\-]+)?(?:[, ]{1,2}[A-Z][\w\-]+)+)[ .,]{0,2}' + ' \(' + basic_regex + '\)'
 # [, ]{1,2} and [ .,]{0,2} handle ", Inc." and similar things.
 
 def find_all_acronyms(text):
     acronyms = find_acronyms(text)
-
+    #parenthesized = expand_parenthesized_acronyms(text)
     expanded = find_expanded_acronyms(text)
-    acronyms.update(expanded)
+
+    #acronyms = combine_acronyms(acronyms, parenthesized)
+    acronyms = combine_acronyms(acronyms, expanded)
 
     return acronyms
 
@@ -24,16 +28,13 @@ def find_acronyms(text):
 def find_expanded_acronyms(text):
     acronyms = {}
 
-    for m in re.finditer(expanded_regex, text):
+    for m in re.finditer(expanded_tolerant_regex, text):
         expansion, acronym = m.groups()
 
         expansion = fix_divided_expansion(expansion, acronym, m)
         expansion = strip_extraneous_words(expansion, acronym)
 
-        if acronym not in acronyms:
-            acronyms[acronym] = [expansion]
-        elif expansion not in acronyms[acronym]:
-            acronyms[acronym].append(expansion)
+        add_expansion(acronyms, acronym, expansion)
 
     return acronyms
 
@@ -115,4 +116,23 @@ def combine_acronyms(first, second):
 			combined[k] = second[k]
 
 	return combined
+
+def expand_parenthesized_acronyms(text):
+    acronyms = {}
+
+    for m in re.finditer(parenthesized_regex, text):
+        acronym = m.groups()[0]
+
+        expansion = fix_divided_expansion('', acronym, m)
+        expansion = strip_extraneous_words(expansion, acronym)
+
+        add_expansion(acronyms, acronym, expansion)
+
+    return acronyms
+
+def add_expansion(acronyms, acronym, expansion):
+        if acronym not in acronyms:
+            acronyms[acronym] = [expansion]
+        elif expansion not in acronyms[acronym]:
+            acronyms[acronym].append(expansion)
 

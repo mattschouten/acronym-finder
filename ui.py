@@ -41,6 +41,10 @@ class AcronymUi(tk.Frame):
         self.generate_acronym_table_button = tk.Button(self.step_frame[2], text="Generate Acronym Table",
                                     command=self.generate_acronym_table)
 
+        self.step_frame.append(tk.LabelFrame(self, text="Optional:  Unused Acronyms"))
+        self.compare_definitions_button = tk.Button(self.step_frame[3], text="Scan Selected Table for Defined-but-Unused Acronyms",
+                                    command=self.compare_definitions_to_document)
+
         self.grid(column=0, row=0)
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -59,9 +63,12 @@ class AcronymUi(tk.Frame):
         self.step_frame[2].grid(column=0, row=2, sticky='ew', padx=3, pady=3, ipadx=3, ipady=3)
         self.generate_acronym_table_button.grid(row=0, column=0, sticky='we')
 
+        self.step_frame[3].grid(column=0, row=3, sticky='ew', padx=3, pady=3, ipadx=3, ipady=3)
+        self.compare_definitions_button.grid(row=0, column=0, sticky='we')
+
 
         self.step_frame[0].columnconfigure(1, weight=1, minsize=100)
-        for fn in range(0, 3):
+        for fn in range(0, 4):
             self.rowconfigure(fn, weight=1)
             self.step_frame[fn].columnconfigure(0, weight=1)
             self.step_frame[fn].rowconfigure(0, weight=1)
@@ -104,6 +111,12 @@ class AcronymUi(tk.Frame):
         self.acronyms_found_label.delete(0, tk.END)
         self.acronyms_found_label.insert(0, len(self.working_acronyms))
 
+    def compare_definitions_to_document(self):
+        text = word.get_text_in_range(word.get_selected_range())
+        acronyms = acronym_finding.find_acronyms(text) # starting with just basic acronyms
+
+        unused = acronym_finding.find_unused_acronyms(self.working_acronyms, acronyms)
+        word.create_acronym_document(unused)
 
 if __name__ == '__main__':
     root = tk.Tk()

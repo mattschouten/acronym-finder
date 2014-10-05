@@ -119,3 +119,8 @@ def add_expansion(acronyms, acronym, expansion):
         elif expansion not in acronyms[acronym]:
             acronyms[acronym].append(expansion)
 
+def find_unused_acronyms(found_acronyms, defined_acronyms):
+    unused = {k:v for (k,v) in defined_acronyms.items() if k not in found_acronyms}
+    return unused
+
+

@@ -1,7 +1,7 @@
 import unittest
 import re
 
-from acronym_finding import find_acronyms, find_expanded_acronyms, strip_extraneous_words, fix_divided_expansion, expanded_regex, find_all_acronyms, combine_acronyms, add_expansion
+from acronym_finding import find_acronyms, find_expanded_acronyms, strip_extraneous_words, fix_divided_expansion, expanded_regex, find_all_acronyms, combine_acronyms, add_expansion, find_unused_acronyms
 
 
 class TestAcronymFinding(unittest.TestCase):
@@ -233,5 +233,19 @@ class TestAcronymFinding(unittest.TestCase):
 			self.assertEqual(len(acronyms), 2)
 			self.assertListEqual(acronyms['ABC'], ['A B C'])
 			self.assertListEqual(acronyms['MFE'], ['My Fake Expansion', 'Mother Failed English'])
+	
+	def test_defined_but_not_used_acronyms(self):
+			acronyms = find_expanded_acronyms(
+					"The Alpha Beta Company (ABC) project was Really Really Good (RRG)")
+			defined_acronyms = find_acronyms("ABC RRG LOL")
+			self.assertEqual(len(acronyms), 2)
+			self.assertEqual(len(defined_acronyms), 3)
+
+			unused_acronyms = find_unused_acronyms(acronyms, defined_acronyms)
+			self.assertEqual(len(unused_acronyms), 1)
+			self.assertTrue('LOL' in unused_acronyms)
+
+
+
 
 # TODO:  Consider adding support for acronym-expansion, e.g. "ABC (Alpha Beta Corporation)"

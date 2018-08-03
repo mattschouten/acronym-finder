@@ -1,6 +1,6 @@
 import re
 
-basic_regex = r'\b([A-Z]{2,})\b'
+basic_regex = r'\b([A-Z]{2,})s?\b'
 expanded_regex = r'([A-Z][\w\-]+(?:[, ]{1,2}[A-Z][\w\-]+)+)[ .,]{0,2}' + ' \(' + basic_regex + '\)'
 expanded_tolerant_regex = r'([A-Z][\w\-]+(?:[ ][\w\-]+)?(?:[, ]{1,2}[A-Z][\w\-]+)+)[ .,]{0,2}' + ' \(' + basic_regex + '\)'
 # [, ]{1,2} and [ .,]{0,2} handle ", Inc." and similar things.
@@ -17,7 +17,8 @@ def find_acronyms(text):
     acronyms = {}
 
     for m in re.finditer(basic_regex, text):
-        acronyms[m.group()] = ['']
+        acronym = m.group(1)
+        acronyms[acronym] = ['']
 
     return acronyms
 

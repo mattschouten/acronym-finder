@@ -245,6 +245,16 @@ class TestAcronymFinding(unittest.TestCase):
 			self.assertEqual(len(unused_acronyms), 1)
 			self.assertTrue('LOL' in unused_acronyms)
 
+	def test_pluralized_acronyms(self):
+			acronyms = find_acronyms('There are four CDFs due today')
+			self.assertEqual(len(acronyms), 1)
+			self.assertTrue('CDF' in acronyms)
+			self.assertEqual(acronyms['CDF'], [''])
+
+			acronyms = find_expanded_acronyms('The Corporate Data Files (CDFs) are missing.')
+			self.assertEqual(len(acronyms), 1)
+			self.assertTrue('CDF' in acronyms)
+			self.assertEqual(acronyms['CDF'], ['Corporate Data Files'])
 
 
 

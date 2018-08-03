@@ -14,10 +14,15 @@ Summary
 
 These functions all return a dict.  Keys are the acronym.  Each value is a list containing all expansions found.
 
+Technical
+----
+Should run under Python 2 or 3.  Tested on Python 3.
+
+Unit tests:  `python3 -m unittest test/test_acronym_finding.py`
 
 Legal and License
 ----
-Copyright &copy; 2014 Matt Schouten
+Copyright &copy; 2014-2018 Matt Schouten
 
 There is no warranty, express or implied.
 
